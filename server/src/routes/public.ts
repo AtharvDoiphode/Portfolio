@@ -71,7 +71,7 @@ publicRouter.post("/contact", quoteLimiter, async (req, res) => {
   });
   // The enquiry is already saved in the admin inbox; the email is a bonus.
   const emailed = await sendQuoteEmail({
-    name: data.name, email: data.email, needs: data.needs,
+    id: msg.id, name: data.name, email: data.email, needs: data.needs,
     budget: data.budget, timeline: data.timeline, body: data.message,
   });
   res.status(201).json({ ok: true, id: msg.id, emailed });

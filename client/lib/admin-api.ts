@@ -48,6 +48,7 @@ export interface AdminProject {
 export interface AdminMessage {
   id: string; name: string; email: string; subject: string; needs: string[]; budget: string; timeline: string;
   body: string; read: boolean; archived: boolean; createdAt: string;
+  replies?: { body: string; sentAt: string }[]; // sent from the admin panel
 }
 export interface SettingsDoc {
   profile: { name: string; headline: string; location: string; email: string; photoUrl: string; introPhotoUrl: string; aboutPhotoUrl: string };

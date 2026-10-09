@@ -1,6 +1,7 @@
 import express, { Router } from "express";
 import { z } from "zod";
 import { cloudinaryConfigured, signUpload } from "../lib/cloudinary.js";
+import { mailConfigured, sendReplyEmail } from "../lib/mail.js";
 import { revalidateSite } from "../lib/revalidate.js";
 import { uniqueSlug } from "../lib/slug.js";
 import { requireAdmin, requireCsrfHeader } from "../middleware/auth.js";
@@ -128,6 +129,22 @@ adminRouter.patch("/messages/:id", async (req, res) => {
   const patch = z.object({ read: z.boolean().optional(), archived: z.boolean().optional() }).parse(req.body);
   const m = await Message.findByIdAndUpdate(req.params.id, patch, { new: true });
   if (!m) throw new HttpError(404, "Message not found");
+  res.json(m.toJSON());
+});
+
+/** Lets the inbox say whether in-panel replies can be sent at all. */
+adminRouter.get("/mail", (_req, res) => res.json({ configured: mailConfigured() }));
+
+/** Emails a reply to the visitor and keeps a copy on the message. Nothing is saved if the email fails. */
+adminRouter.post("/messages/:id/reply", async (req, res) => {
+  const { body } = z.object({ body: z.string().trim().min(1, "Write a reply first").max(5000) }).parse(req.body);
+  const m = await Message.findById(req.params.id);
+  if (!m) throw new HttpError(404, "Message not found");
+  const sent = await sendReplyEmail(m, body);
+  if (!sent.ok) throw new HttpError(502, sent.error);
+  m.replies.push({ body, sentAt: new Date() });
+  m.read = true;
+  await m.save();
   res.json(m.toJSON());
 });
 
