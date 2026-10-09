@@ -1,0 +1,18 @@
+# Only the app code goes in the repo. Design files (ref/, uploads/, *.dc.html, support.js) stay local.
+/*
+!/.gitignore
+!/README.md
+!/client/
+!/server/
+
+# Safety net on top of client/.gitignore and server/.gitignore: never commit secrets or build output.
+.env
+.env.*
+!.env.example
+node_modules/
+.next/
+dist/
+out/
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store

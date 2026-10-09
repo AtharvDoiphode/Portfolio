@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+/* Design tokens, from the Design Spec (section 05) */
+@theme {
+  --breakpoint-md: 47.5rem; /* mobile < 760px */
+
+  --color-navy: #14112B;      /* Navy 900: dark sections, text on light */
+  --color-navy-2: #1E1A3D;    /* Navy 800: cards on dark */
+  --color-blush: #EBCFE0;     /* Pink 200: light sections */
+  --color-lilac: #F6EEF2;     /* Lilac 50: alt light sections */
+  --color-paper: #F7F3F5;     /* Off-white: text on dark, badge */
+  --color-ultra: #3B4BFF;     /* Ultramarine: buttons, focus, accents */
+  --color-ultra-hi: #2E3CE6;  /* Ultramarine hover */
+  --color-ultra-soft: #9AA2FF;/* Ultra 300: accent text on dark */
+  --color-mute-d: #B9B3CF;    /* Muted dark: meta text on navy */
+  --color-mute-l: #4A4466;    /* Muted light: meta text on pink */
+  --color-ink-2: #2E2848;     /* Body copy on light */
+  --color-mist: #D6D1E4;      /* Body copy on dark */
+  --color-chip-coral: oklch(0.8 0.12 25);
+  --color-chip-lilac: oklch(0.8 0.12 300);
+  --color-chip-green: oklch(0.8 0.12 150);
+  --color-chip-yellow: oklch(0.8 0.12 85);
+  --color-chip-blue: oklch(0.8 0.12 250);
+
+  --font-display: "Bricolage Grotesque Variable", system-ui, sans-serif;
+  --font-sans: "Geist Variable", system-ui, sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, monospace;
+
+  --ease-reveal: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --animate-marquee: marquee 42s linear infinite;
+  @keyframes marquee {
+    to { transform: translateX(-50%); }
+  }
+}
+
+/* Resets live in @layer base so Tailwind utilities (text-paper, font-*, etc.) can override them. */
+@layer base {
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--color-navy);
+    color: var(--color-paper);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  input, textarea { font: inherit; }
+  ::selection { background: var(--color-ultra); color: #fff; }
+
+  /* Focus ring: 3px ultramarine, 3px offset; lighter on dark surfaces */
+  :focus-visible { outline: 3px solid var(--color-ultra); outline-offset: 3px; }
+  .on-dark :focus-visible { outline-color: var(--color-ultra-soft); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+  * { transition: none !important; }
+  .animate-marquee { animation: none !important; }
+}
+
+@layer components {
+  /* Stacked sections with 32px rounded tops that overlap the section above */
+  .sec {
+    position: relative;
+    margin-top: -32px;
+    border-radius: 32px 32px 0 0;
+    padding: clamp(72px, 10vw, 140px) clamp(20px, 5vw, 72px);
+    scroll-margin-top: 20px;
+  }
+  .wrap { max-width: 1280px; margin: 0 auto; }
+  .h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(48px, 7vw, 112px);
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+  }
+  .mono-label {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.06em;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 48px;
+    padding: 14px 24px;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+  }
+}
